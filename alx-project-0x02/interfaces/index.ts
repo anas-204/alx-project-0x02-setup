@@ -5,5 +5,5 @@ export interface User {
 export interface CardProps {
   title: string;
   content: string;
-  className?: string; // Optional for additional styling
+  className?: string; 
 }
