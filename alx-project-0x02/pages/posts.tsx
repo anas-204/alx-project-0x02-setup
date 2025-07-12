@@ -1,47 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Header from '@/components/layout/Header';
 import PostCard from '@/components/common/PostCard';
 import { PostProps } from '@/interfaces';
 
-const PostsPage: React.FC = () => {
-  const [posts, setPosts] = useState<PostProps[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+interface PostsPageProps {
+  posts: PostProps[];
+  error?: string;
+}
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await fetch(
-          'https://jsonplaceholder.typicode.com/posts?_limit=10'
-        );
-        if (!response.ok) {
-          throw new Error('Failed to fetch posts');
-        }
-        const data = await response.json();
-        setPosts(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An unknown error occurred');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPosts();
-  }, []);
-
+const PostsPage: React.FC<PostsPageProps> = ({ posts, error }) => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
       <div className="max-w-6xl mx-auto py-8 px-4">
         <h1 className="text-3xl font-bold mb-8">Posts</h1>
         
-        {loading && (
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-            <p className="mt-2 text-gray-600">Loading posts...</p>
-          </div>
-        )}
-
         {error && (
           <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
             <div className="flex">
@@ -72,5 +45,32 @@ const PostsPage: React.FC = () => {
     </div>
   );
 };
+
+export async function getStaticProps() {
+  try {
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts?_limit=10');
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch posts');
+    }
+    
+    const posts = await response.json();
+    
+    return {
+      props: {
+        posts,
+      },
+      // Re-generate the page at most once every 10 seconds
+      revalidate: 10, // Optional: for ISR (Incremental Static Regeneration)
+    };
+  } catch (error) {
+    return {
+      props: {
+        posts: [],
+        error: error instanceof Error ? error.message : 'An unknown error occurred',
+      },
+    };
+  }
+}
 
 export default PostsPage;
