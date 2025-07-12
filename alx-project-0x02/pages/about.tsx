@@ -1,9 +1,11 @@
 import React from 'react';
 import Button from '@/components/common/Button';
+import Header from '@/components/layout/Header';
 
 const AboutPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
+        <Header/>
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold mb-8">Button Component Demo</h1>
         
