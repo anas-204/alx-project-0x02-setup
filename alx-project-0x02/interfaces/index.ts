@@ -7,3 +7,7 @@ export interface CardProps {
   content: string;
   className?: string; 
 }
+export interface PostData {
+  title: string;
+  content: string;
+}
